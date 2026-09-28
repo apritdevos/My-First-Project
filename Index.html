@@ -1,0 +1,531 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Ludo Game</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .game {
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 36px;
+        }
+
+        .turn {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .board {
+            width: min(90vw, 600px);
+            height: min(90vw, 600px);
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            background: white;
+            border: 6px solid #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,.4);
+        }
+
+        .cell {
+            border: 1px solid #999;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Home areas */
+
+        .red-home {
+            grid-column: 1 / 7;
+            grid-row: 1 / 7;
+            background: #e53935;
+        }
+
+        .green-home {
+            grid-column: 10 / 16;
+            grid-row: 1 / 7;
+            background: #43a047;
+        }
+
+        .yellow-home {
+            grid-column: 1 / 7;
+            grid-row: 10 / 16;
+            background: #fdd835;
+        }
+
+        .blue-home {
+            grid-column: 10 / 16;
+            grid-row: 10 / 16;
+            background: #1e88e5;
+        }
+
+        .home-inner {
+            width: 70%;
+            height: 70%;
+            background: white;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 15%;
+            padding: 12%;
+        }
+
+        .token-home {
+            border-radius: 50%;
+            border: 3px solid #333;
+        }
+
+        .red-token {
+            background: #e53935;
+        }
+
+        .green-token {
+            background: #43a047;
+        }
+
+        .yellow-token {
+            background: #fdd835;
+        }
+
+        .blue-token {
+            background: #1e88e5;
+        }
+
+        /* Center */
+
+        .center {
+            grid-column: 7 / 10;
+            grid-row: 7 / 10;
+            background: conic-gradient(
+                #e53935 0deg 90deg,
+                #43a047 90deg 180deg,
+                #1e88e5 180deg 270deg,
+                #fdd835 270deg 360deg
+            );
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #111;
+        }
+
+        .center-text {
+            background: white;
+            color: #111;
+            border-radius: 50%;
+            width: 65%;
+            height: 65%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Board paths */
+
+        .path {
+            background: #fafafa;
+        }
+
+        .red-path {
+            background: #ffcdd2;
+        }
+
+        .green-path {
+            background: #c8e6c9;
+        }
+
+        .yellow-path {
+            background: #fff9c4;
+        }
+
+        .blue-path {
+            background: #bbdefb;
+        }
+
+        /* Controls */
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        #dice {
+            width: 70px;
+            height: 70px;
+            background: white;
+            color: #111;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.3);
+        }
+
+        button {
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            background: #ff9800;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f57c00;
+        }
+
+        button:disabled {
+            background: #777;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #ddd;
+            min-height: 25px;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 500px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .turn {
+                font-size: 16px;
+            }
+
+            .board {
+                border-width: 3px;
+            }
+
+            .home-inner {
+                gap: 8%;
+            }
+
+            #dice {
+                width: 55px;
+                height: 55px;
+                font-size: 32px;
+            }
+
+            button {
+                padding: 12px 18px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <h1>🎲 My Ludo Game</h1>
+
+    <div class="turn" id="turn">
+        🔴 Red Player's Turn
+    </div>
+
+    <div class="board">
+
+        <!-- RED HOME -->
+        <div class="red-home">
+            <div class="home-inner">
+                <div class="token-home red-token"></div>
+                <div class="token-home red-token"></div>
+                <div class="token-home red-token"></div>
+                <div class="token-home red-token"></div>
+            </div>
+        </div>
+
+        <!-- GREEN HOME -->
+        <div class="green-home">
+            <div class="home-inner">
+                <div class="token-home green-token"></div>
+                <div class="token-home green-token"></div>
+                <div class="token-home green-token"></div>
+                <div class="token-home green-token"></div>
+            </div>
+        </div>
+
+        <!-- YELLOW HOME -->
+        <div class="yellow-home">
+            <div class="home-inner">
+                <div class="token-home yellow-token"></div>
+                <div class="token-home yellow-token"></div>
+                <div class="token-home yellow-token"></div>
+                <div class="token-home yellow-token"></div>
+            </div>
+        </div>
+
+        <!-- BLUE HOME -->
+        <div class="blue-home">
+            <div class="home-inner">
+                <div class="token-home blue-token"></div>
+                <div class="token-home blue-token"></div>
+                <div class="token-home blue-token"></div>
+                <div class="token-home blue-token"></div>
+            </div>
+        </div>
+
+
+        <!-- TOP PATH -->
+        <div class="cell path" style="grid-column:7;grid-row:1"></div>
+        <div class="cell path" style="grid-column:7;grid-row:2"></div>
+        <div class="cell green-path" style="grid-column:7;grid-row:3"></div>
+        <div class="cell green-path" style="grid-column:7;grid-row:4"></div>
+        <div class="cell green-path" style="grid-column:7;grid-row:5"></div>
+        <div class="cell green-path" style="grid-column:7;grid-row:6"></div>
+
+        <div class="cell path" style="grid-column:8;grid-row:1"></div>
+        <div class="cell path" style="grid-column:8;grid-row:2"></div>
+        <div class="cell path" style="grid-column:8;grid-row:3"></div>
+        <div class="cell path" style="grid-column:8;grid-row:4"></div>
+        <div class="cell path" style="grid-column:8;grid-row:5"></div>
+        <div class="cell path" style="grid-column:8;grid-row:6"></div>
+
+        <div class="cell path" style="grid-column:9;grid-row:1"></div>
+        <div class="cell path" style="grid-column:9;grid-row:2"></div>
+        <div class="cell red-path" style="grid-column:9;grid-row:3"></div>
+        <div class="cell red-path" style="grid-column:9;grid-row:4"></div>
+        <div class="cell red-path" style="grid-column:9;grid-row:5"></div>
+        <div class="cell red-path" style="grid-column:9;grid-row:6"></div>
+
+
+        <!-- LEFT PATH -->
+
+        <div class="cell path" style="grid-column:1;grid-row:7"></div>
+        <div class="cell path" style="grid-column:2;grid-row:7"></div>
+        <div class="cell red-path" style="grid-column:3;grid-row:7"></div>
+        <div class="cell red-path" style="grid-column:4;grid-row:7"></div>
+        <div class="cell red-path" style="grid-column:5;grid-row:7"></div>
+        <div class="cell red-path" style="grid-column:6;grid-row:7"></div>
+
+        <div class="cell path" style="grid-column:1;grid-row:8"></div>
+        <div class="cell path" style="grid-column:2;grid-row:8"></div>
+        <div class="cell path" style="grid-column:3;grid-row:8"></div>
+        <div class="cell path" style="grid-column:4;grid-row:8"></div>
+        <div class="cell path" style="grid-column:5;grid-row:8"></div>
+        <div class="cell path" style="grid-column:6;grid-row:8"></div>
+
+        <div class="cell path" style="grid-column:1;grid-row:9"></div>
+        <div class="cell path" style="grid-column:2;grid-row:9"></div>
+        <div class="cell yellow-path" style="grid-column:3;grid-row:9"></div>
+        <div class="cell yellow-path" style="grid-column:4;grid-row:9"></div>
+        <div class="cell yellow-path" style="grid-column:5;grid-row:9"></div>
+        <div class="cell yellow-path" style="grid-column:6;grid-row:9"></div>
+
+
+        <!-- RIGHT PATH -->
+
+        <div class="cell red-path" style="grid-column:10;grid-row:7"></div>
+        <div class="cell red-path" style="grid-column:11;grid-row:7"></div>
+        <div class="cell red-path" style="grid-column:12;grid-row:7"></div>
+        <div class="cell path" style="grid-column:13;grid-row:7"></div>
+        <div class="cell path" style="grid-column:14;grid-row:7"></div>
+        <div class="cell path" style="grid-column:15;grid-row:7"></div>
+
+        <div class="cell path" style="grid-column:10;grid-row:8"></div>
+        <div class="cell path" style="grid-column:11;grid-row:8"></div>
+        <div class="cell path" style="grid-column:12;grid-row:8"></div>
+        <div class="cell path" style="grid-column:13;grid-row:8"></div>
+        <div class="cell path" style="grid-column:14;grid-row:8"></div>
+        <div class="cell path" style="grid-column:15;grid-row:8"></div>
+
+        <div class="cell blue-path" style="grid-column:10;grid-row:9"></div>
+        <div class="cell blue-path" style="grid-column:11;grid-row:9"></div>
+        <div class="cell blue-path" style="grid-column:12;grid-row:9"></div>
+        <div class="cell path" style="grid-column:13;grid-row:9"></div>
+        <div class="cell path" style="grid-column:14;grid-row:9"></div>
+        <div class="cell path" style="grid-column:15;grid-row:9"></div>
+
+
+        <!-- BOTTOM PATH -->
+
+        <div class="cell yellow-path" style="grid-column:7;grid-row:10"></div>
+        <div class="cell yellow-path" style="grid-column:7;grid-row:11"></div>
+        <div class="cell yellow-path" style="grid-column:7;grid-row:12"></div>
+        <div class="cell path" style="grid-column:7;grid-row:13"></div>
+        <div class="cell path" style="grid-column:7;grid-row:14"></div>
+        <div class="cell path" style="grid-column:7;grid-row:15"></div>
+
+        <div class="cell path" style="grid-column:8;grid-row:10"></div>
+        <div class="cell path" style="grid-column:8;grid-row:11"></div>
+        <div class="cell path" style="grid-column:8;grid-row:12"></div>
+        <div class="cell path" style="grid-column:8;grid-row:13"></div>
+        <div class="cell path" style="grid-column:8;grid-row:14"></div>
+        <div class="cell path" style="grid-column:8;grid-row:15"></div>
+
+        <div class="cell blue-path" style="grid-column:9;grid-row:10"></div>
+        <div class="cell blue-path" style="grid-column:9;grid-row:11"></div>
+        <div class="cell blue-path" style="grid-column:9;grid-row:12"></div>
+        <div class="cell path" style="grid-column:9;grid-row:13"></div>
+        <div class="cell path" style="grid-column:9;grid-row:14"></div>
+        <div class="cell path" style="grid-column:9;grid-row:15"></div>
+
+
+        <!-- CENTER -->
+
+        <div class="center">
+            <div class="center-text">
+                🏆 LUDO
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="controls">
+
+        <div id="dice">🎲</div>
+
+        <button id="rollButton" onclick="rollDice()">
+            Roll Dice
+        </button>
+
+    </div>
+
+    <div id="message">
+        Roll the dice to start the game!
+    </div>
+
+</div>
+
+
+<script>
+
+    const players = [
+        {
+            name: "Red",
+            emoji: "🔴"
+        },
+        {
+            name: "Green",
+            emoji: "🟢"
+        },
+        {
+            name: "Yellow",
+            emoji: "🟡"
+        },
+        {
+            name: "Blue",
+            emoji: "🔵"
+        }
+    ];
+
+    let currentPlayer = 0;
+
+    const diceFaces = [
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+
+    function rollDice() {
+
+        const dice = Math.floor(Math.random() * 6) + 1;
+
+        document.getElementById("dice").textContent =
+            diceFaces[dice - 1];
+
+        const player = players[currentPlayer];
+
+        document.getElementById("message").textContent =
+            player.emoji +
+            " " +
+            player.name +
+            " rolled " +
+            dice +
+            "!";
+
+
+        /*
+            Basic Ludo rule:
+            If player rolls 6, they get another turn.
+        */
+
+        if (dice === 6) {
+
+            document.getElementById("message").textContent +=
+                " 🎉 You got a 6! Roll again.";
+
+            return;
+        }
+
+
+        // Next player
+
+        currentPlayer++;
+
+        if (currentPlayer >= players.length) {
+            currentPlayer = 0;
+        }
+
+        updateTurn();
+    }
+
+
+    function updateTurn() {
+
+        const player = players[currentPlayer];
+
+        document.getElementById("turn").textContent =
+            player.emoji +
+            " " +
+            player.name +
+            " Player's Turn";
+    }
+
+</script>
+
+</body>
+</html>
+```
