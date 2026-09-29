@@ -1,0 +1,65 @@
+.office-section {
+    min-height: 500px;
+    padding: 60px 30px;
+    background:
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)),
+        url('office-background.jpg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.office-content {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.office-content h1 {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.office-content > p {
+    font-size: 20px;
+}
+
+.employees {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.employee {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 25px;
+    width: 350px;
+}
+
+.emoji {
+    font-size: 70px;
+}
+
+.employee h2 {
+    margin: 10px 0;
+}
+
+.employee span {
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .employees {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .employee {
+        width: 80%;
+    }
+}
